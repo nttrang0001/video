@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Teacher</title>
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="node_modules/socket.io-client/dist/socket.io.js"></script>
+
+    <script>
+
+        $(document).ready(function(){
+            var socket;
+
+            $("#frmRoom").show();
+            $("#frmComputer").show();
+            $("#frmMessage").show();
+
+            
+
+            $("#connect").click(function(){
+                var server = $('input').val();
+                socket = io(server);
+
+                //nhan danh sach may
+                socket.on("server-send-list-user", function(data){
+                    $("#showImage").html("");
+                    data.forEach(function(i){
+                         $("#showImage").append("<div class = 'grid-item'>" + i +  "</br>" + "</div>");
+
+                    });
+                });
+               
+
+                //Nhận base64 từ server
+                socket.on('sendImageToTeacher', function(data){ 
+                    $('#screen').attr('src', data);
+                    $('#screen1').attr('src', data);
+                });
+
+                $(this).hide();
+                $('#disconnect').show();
+            });
+
+            $('#disconnect').click(function(){
+                socket.disconnect();
+                $(this).hide();
+                $('#connect').show();
+            });
+        });
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="layout.css">
+</head>
+<body>
+    <div id="wrapper">
+        <!-- computer -->
+        <div id="frmComputer">
+            <header id="header">
+                <!-- tao title -->
+                <div id="left">
+                    <div id="name">MAY 01</div>
+                </div>
+
+                <div id="right">
+                    <span>Địa chỉ server: </span><input type="text" value="http://localhost:8000">
+                    <button class="button" id="connect">Kết nối</button>
+                    <button class="button" id="disconnect">Ngắt kết nối</button>
+
+                    <!-- tao nut thoát -->
+                    <input type="button" class="button" id="btnCancel" value="Thoát" name="">
+
+                    <!-- tao nut gui tin nhan -->
+                    <input type="button" class="button" id="btnSendMessage" value="Gửi thông điệp" name="">
+                </div>
+            </header>
+
+            <footer>
+                <!-- trinh phat video -->
+                <img id="screen">
+                
+            </footer>
+        </div>
+
+        <!-- room -->
+        <div id="frmRoom">
+            <header id="header">
+                    <!-- tao nut gui -->
+                    <input type="button" class="button" id="btnSendMessage" value="Gửi thông điệp" name="">    
+                </header>
+                
+                <footer>
+                    <!-- man hinh timeline -->
+                    <div id="showImage">
+
+                        <div class="grid-container">
+                            <div class="grid-item"><img id="screen1"></div>
+                            <div class="grid-item"></div>
+                            <div class="grid-item">3</div>
+                            <div class="grid-item"></div>
+                            <div class="grid-item">5</div>
+                            <div class="grid-item">6</div>
+                            <div class="grid-item">7</div>
+                            <div class="grid-item">8</div>
+                            <div class="grid-item">9</div>
+                        </div>
+                    </div>
+                </footer>
+        </div>
+
+        <!-- message -->
+        <div id="frmMessage">
+            <div id="title">
+                <div>SOẠN THÔNG ĐIỆP</div>
+            </div>
+
+            <input type="text" id="content" plateholder="message" name="">
+
+            <!-- tao nut thoat -->
+            <input type="button" class="button" id="btnCancel" value="Thoát" name="">
+
+            <!-- tao nut gui -->
+            <input type="button" class="button"id="btnSend" value="Gửi" name="">  
+        </div>
+    </div>
+</body>
+</html>
